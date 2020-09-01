@@ -33,7 +33,7 @@ const Home = () => {
 		)
 	}
 	return (
-		<div className="w-100">{news.length > 0 ? news.map(item => item) : 'Không có mạng'}</div>
+		<div className="w-100">{news.length > 0 ? news.map(item => item) : 'Không có dữ liệu'}</div>
 	)
 };
 
