@@ -18,17 +18,22 @@ const Home = () => {
 
 	const createArticle = (article: { url: string | undefined; title: React.ReactNode; urlToImage: string | undefined; description: React.ReactNode; }) => {
 		return (
-			<div className="article">
-				<a href={article.url}>
-					<h2>{article.title}</h2>
-					<img src={article.urlToImage} />
-					<p>{article.description}</p>
-				</a>
-			</div>
+			<>
+				<div className="article">
+					<a href={article.url}>
+						<h2>{article.title}</h2>
+						<img src={article.urlToImage} style={{ width: 300, height: 300 }} />
+						<p>{article.description}</p>
+					</a>
+				</div>
+				<br />
+				<hr />
+				<br />
+			</>
 		)
 	}
 	return (
-	<div>{news.length > 0 ? news.map(item => item) : 'Không có mạng'}</div>
+		<div className="w-100">{news.length > 0 ? news.map(item => item) : 'Không có mạng'}</div>
 	)
 };
 
