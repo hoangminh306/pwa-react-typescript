@@ -20,7 +20,7 @@ const TodoStatus = (props: { handleTodoComplete: (id: any, status: string) => vo
 					)}
 				<p style={{ margin: 0, fontSize: 13 }}>Doing</p>
 			</div>
-			<div onClick={() => props.handleTodoComplete(props.todo.id, 'complete')}>
+			<div onClick={() => props.handleTodoComplete(props.todo.id, props.todo.deadline === null ? 'error' : 'complete')}>
 				{props.todo.status === 'complete' ? (
 					<span className="todo-item-checked">✔</span>
 				) : (

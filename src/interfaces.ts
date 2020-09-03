@@ -4,12 +4,19 @@ export interface TodoInterface {
   text: string;
 	status: string;
 	createDate: Date;
-	deadline?: Date;
+	deadline?: Date | null;
+	category: TodoCategoryInterface;
+}
+export interface TodoCategoryInterface {
+	type: string;
+	desc: string;
+	priority: number;
 }
 // Todo form interface
 export interface TodoFormInterface {
   todos: TodoInterface[];
-  handleTodoCreate: (todo: TodoInterface) => void;
+	handleTodoCreate: (todo: TodoInterface | null) => void;
+	handleSort: (sortBy: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 // Todo list interface
 export interface TodoListInterface {

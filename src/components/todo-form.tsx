@@ -1,27 +1,41 @@
 import * as React from 'react'
 import shortid from 'shortid'
-import {TodoInterface, TodoFormInterface} from './../interfaces'
+import {TodoInterface, TodoFormInterface, TodoCategoryInterface} from './../interfaces'
+
+const CATEGORY = [
+	{ type: 'medium', desc: 'normal', priority: 3 },
+	{ type: 'high', desc: 'Important', priority: 2 },
+	{ type: 'critical', desc: 'Very important', priority: 1 },
+]
 
 const TodoForm = (props: TodoFormInterface) => {
   // Create ref
   const inputRef = React.useRef<HTMLInputElement>(null)
-  const [formState, setFormState] = React.useState('')
+	const [formState, setFormState] = React.useState('')
+	const [category, setCategory] = React.useState<TodoCategoryInterface>({type: 'medium', desc: 'normal', priority: 3});
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     setFormState(event.target.value)
   }
 
 	function handleInputEnter(event: React.KeyboardEvent) {
     if (event.key === 'Enter') {
+			if (formState === '') return;
+			const index = props.todos.findIndex(todo => todo.text === formState);
+			if (index > -1) return props.handleTodoCreate(null);
 			const createDate = new Date();
 			createDate.setHours(7);
 			createDate.setMinutes(0);
 			createDate.setSeconds(0);
-
       const newTodo: TodoInterface = {
         id: shortid.generate(),
         text: formState,
 				status: 'notDoing',
 				createDate,
+				category: {
+					type: category.type,
+					desc: category.desc,
+					priority: category.priority
+				}
 			}
 			
       // Create new todo item
@@ -30,9 +44,16 @@ const TodoForm = (props: TodoFormInterface) => {
       // Reset the input field
       if (inputRef && inputRef.current) {
         inputRef.current.value = ''
+				setFormState('');
       }
     }
-  }
+	}
+	
+	const handleChangeCategory = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const category = CATEGORY.find(category => category.type === event.target.value);
+		if (category) setCategory(category);
+	}
+
   return (
     <div className="todo-form">
       <input
@@ -42,6 +63,16 @@ const TodoForm = (props: TodoFormInterface) => {
         onChange={event => handleInputChange(event)}
         onKeyPress={event => handleInputEnter(event)}
       />
+			<select onChange={event => handleChangeCategory(event)}>
+				{CATEGORY.map(category =>
+					<option key={category.type} value={category.type}>{category.type} - (Priority: {category.desc})</option>
+				)}
+			</select>
+			<select onChange={props.handleSort} style={{ marginLeft: 20 }}>
+				<option value="">Sort by</option>
+				<option value="priorityASC">Priority ascending</option>
+				<option value="priorityDESC">Priority descending</option>
+			</select>
     </div>
   )
 }
