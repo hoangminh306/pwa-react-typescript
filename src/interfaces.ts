@@ -17,6 +17,8 @@ export interface TodoFormInterface {
   todos: TodoInterface[];
 	handleTodoCreate: (todo: TodoInterface | null) => void;
 	handleSort: (sortBy: React.ChangeEvent<HTMLSelectElement>) => void;
+	handleSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
+	handleFilter: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 // Todo list interface
 export interface TodoListInterface {

@@ -13,6 +13,8 @@ const DEADLINE_ERROR = 'You should change deadline and tick complete !';
 const TodoListPage = () => {
   const [todos, setTodos] = React.useState<TodoInterface[]>([])
   const [error, setError] = React.useState('')
+  const [todosSearch, setTodosSearch] = React.useState<TodoInterface[]>([])
+  const [todosFilter, setTodosFilter] = React.useState<TodoInterface[]>([])
 
   function handleTodoCreate(todo: TodoInterface | null) {
 		if (!todo) return setError(EXIST_ERROR);
@@ -24,6 +26,8 @@ const TodoListPage = () => {
 
     setTodos(newTodosState)
 		setLocalStorage(newTodosState);
+		if (todosFilter.length > 0) setTodosFilter([]);
+		if (todosSearch.length > 0) setTodosSearch([]);
   }
 
   function handleTodoUpdate(event: React.ChangeEvent<HTMLInputElement>, id: string) {
@@ -44,6 +48,14 @@ const TodoListPage = () => {
 
 		setTodos(newTodosState)
 		setLocalStorage(newTodosState);
+		if (todosFilter.length > 0) {
+			const newTodoFilter: TodoInterface[] = todos.filter((todo: TodoInterface) => todo.id !== id);
+			setTodosFilter(newTodoFilter);
+		}
+		if (todosSearch.length > 0) {
+			const newTodoSearch: TodoInterface[] = todos.filter((todo: TodoInterface) => todo.id !== id);
+			setTodosSearch(newTodoSearch);
+		}
   }
 
   function handleTodoComplete(id: string, status: string) {
@@ -57,6 +69,8 @@ const TodoListPage = () => {
 			newTodosState[index].status = status;
 			setTodos(newTodosState);
 			setLocalStorage(newTodosState);
+			if (todosFilter.length > 0) setTodosFilter([]);
+			if (todosSearch.length > 0) setTodosSearch([]);
 		}
   }
 
@@ -84,6 +98,8 @@ const TodoListPage = () => {
 			}
 			setTodos(newTodosState);
 			setLocalStorage(newTodosState);
+			if (todosFilter.length > 0) setTodosFilter([]);
+			if (todosSearch.length > 0) setTodosSearch([]);
 		}
 	} 
 
@@ -108,19 +124,43 @@ const TodoListPage = () => {
 
 	const handleSort = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		let newTodosState: TodoInterface[] = [...todos];
+		if (todosSearch.length > 0) newTodosState = [...todosSearch];
+		if (todosFilter.length > 0) newTodosState = [...todosFilter];
 		if (event.target.value === '') return;
 		switch (event.target.value) {
-			case 'priorityASC':
+			case 'priorityDESC':
 				newTodosState = newTodosState.sort((a, b) => a.category.priority - b.category.priority);
 				break;
-			case 'priorityDESC':
+			case 'priorityASC':
 				newTodosState = newTodosState.sort((a, b) => b.category.priority - a.category.priority);
 				break;
 			default:
 				break;
 		}
-		setTodos(newTodosState);
-		setLocalStorage(newTodosState);
+		if (todosFilter.length > 0) setTodosFilter(newTodosState);
+		else if (todosSearch.length > 0) setTodosSearch(newTodosState);
+		else setTodos(newTodosState);
+	}
+
+	const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+		setTodosFilter([]);
+		let todoSearchResult: TodoInterface[] = [];
+		todos.filter(todo => {
+			if (todo.text.includes(event.target.value)) todoSearchResult.push(todo);
+		});
+		setTodosSearch(todoSearchResult);
+	}
+
+	const handleFilter = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const inputSearch = document.getElementById("input-search");
+		if (inputSearch) inputSearch.innerHTML = '';
+		setTodosSearch([]);
+		let todoFilterResult: TodoInterface[] = [];
+		const value = event.target.value;
+		todos.filter(todo => {
+			if (todo.status === value || todo.category.type === value) todoFilterResult.push(todo);
+		});
+		setTodosFilter(todoFilterResult);
 	}
 
 	React.useEffect(() => {
@@ -133,10 +173,12 @@ const TodoListPage = () => {
         todos={todos}
 				handleTodoCreate={handleTodoCreate}
 				handleSort={handleSort}
+				handleSearch={handleSearch}
+				handleFilter={handleFilter}
       />
 			{error && <p style={{ color: 'red' }}>{error}</p>}
       <TodoList
-        todos={todos}
+        todos={todosSearch.length > 0 ? todosSearch : todosFilter.length > 0 ? todosFilter : todos}
         handleTodoUpdate={handleTodoUpdate}
         handleTodoRemove={handleTodoRemove}
 				handleTodoComplete={handleTodoComplete}

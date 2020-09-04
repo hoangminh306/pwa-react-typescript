@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Link, Switch, Route, } from 'react-router-dom'
 const About = lazy(() => import('./pages/About'));
 const Home = lazy(() => import('./pages/Home'));
 const TodoList = lazy(() => import('./pages/TodoList'));
+const Detail = lazy(() => import('./pages/Detail'));
 
 function App() {
 	return (
@@ -22,6 +23,9 @@ function App() {
 					</ul>
 				</nav>
 				<Switch>
+					<Route path="/todoitem/:id">
+						<Detail />
+					</Route>
 					<Route path="/todolist">
 						<TodoList />
 					</Route>

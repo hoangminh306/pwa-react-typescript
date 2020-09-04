@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { TodoItemInterface } from './../interfaces'
 import TodoStatus from './todo-status'
+import { Link } from 'react-router-dom';
 
 const TodoItem = (props: TodoItemInterface) => {
 	const [dayLeft, setDayLeft] = React.useState<string>("");
@@ -77,6 +78,7 @@ const TodoItem = (props: TodoItemInterface) => {
 					Deadline must after create date
 				</div>
 			)}
+			<Link to={`/todoitem/${props.todo.id}`} style={{ marginLeft: 10 }}>Detail</Link>
 			<div className="item-remove" onClick={() => props.handleTodoRemove(props.todo.id)}>
 				⨯
       </div>
