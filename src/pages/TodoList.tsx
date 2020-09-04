@@ -6,13 +6,18 @@ import TodoList from '../components/todo-list'
 import { TodoInterface } from '../interfaces'
 
 import '../styles/styles.css'
+import Pagination from '../components/pagination'
 
 const EXIST_ERROR = 'This todo has already in list !';
 const DEADLINE_ERROR = 'You should change deadline and tick complete !';
+const RESULT_PER_PAGE = 3;
+const PAGE_SIZE = 2;
 
 const TodoListPage = () => {
+  const [todosLocalStorage, setTodosLocalStorage] = React.useState<TodoInterface[]>([])
   const [todos, setTodos] = React.useState<TodoInterface[]>([])
-  const [error, setError] = React.useState('')
+	const [error, setError] = React.useState('')
+	const [currentPage, setCurrentPage] = React.useState<number>(1);
   const [todosSearch, setTodosSearch] = React.useState<TodoInterface[]>([])
   const [todosFilter, setTodosFilter] = React.useState<TodoInterface[]>([])
 
@@ -21,11 +26,16 @@ const TodoListPage = () => {
 		if (error) setError('');
 
     const newTodosState: TodoInterface[] = [...todos]
+    const newTodosLocalStorage: TodoInterface[] = [...todosLocalStorage]
 
-    newTodosState.push(todo)
+		newTodosState.unshift(todo)
+		newTodosState.pop()
 
-    setTodos(newTodosState)
-		setLocalStorage(newTodosState);
+		newTodosLocalStorage.unshift(todo)
+
+		setTodos(newTodosState)
+		setTodosLocalStorage(newTodosLocalStorage)
+		setLocalStorage(newTodosLocalStorage);
 		if (todosFilter.length > 0) setTodosFilter([]);
 		if (todosSearch.length > 0) setTodosSearch([]);
   }
@@ -118,6 +128,9 @@ const TodoListPage = () => {
 				todo.createDate = new Date(todo.createDate);
 				todo.deadline = todo.deadline ? new Date(todo.deadline) : undefined;
 			})
+			setTodosLocalStorage(todoList);
+
+			todoList = todoList.slice(0, 2);
 			setTodos(todoList);
 		}
 	}
@@ -163,6 +176,12 @@ const TodoListPage = () => {
 		setTodosFilter(todoFilterResult);
 	}
 
+	const handlePageClick = (page: number) => {
+		setCurrentPage(page);
+		const result = todosLocalStorage.slice((page - 1) * RESULT_PER_PAGE, page * RESULT_PER_PAGE);
+		setTodos(result);
+	}
+
 	React.useEffect(() => {
 		getLocalStorage();
 	}, []);
@@ -185,6 +204,13 @@ const TodoListPage = () => {
 				handleTodoBlur={handleTodoBlur}
 				handleTodoDeadline={handleTodoDeadline}
       />
+			<Pagination
+				handlePageClick={handlePageClick}
+				pageSize={PAGE_SIZE}
+				resultPerPage={RESULT_PER_PAGE}
+				currentPage={currentPage}
+				totalResult={todosLocalStorage.length}
+			/>
     </div>
   )
 }

@@ -38,3 +38,11 @@ export interface TodoItemInterface {
 	handleTodoDeadline: (id: string, event: React.ChangeEvent<HTMLInputElement>) => void;
   todo: TodoInterface;
 }
+// Pagination
+export interface PaginationInterface {
+	currentPage: number;
+	totalResult: number;
+	resultPerPage: number;
+	pageSize: number;
+	handlePageClick: (page: number) => void;
+}
